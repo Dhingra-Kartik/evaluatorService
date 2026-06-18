@@ -3,17 +3,14 @@
   "compilerOptions": {
     // File Layout
     "rootDir": "./src",
-     "outDir": "./dist",
+    "outDir": "./dist",
 
     // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["node"],
 
     // Other Outputs
     "sourceMap": true,
@@ -25,12 +22,8 @@
     "exactOptionalPropertyTypes": true,
 
     // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
 
     // Recommended Options
     "strict": true,
@@ -40,7 +33,12 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+
+    // Interop Settings (important for ioredis, express, etc.)
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules"],
   "include": ["./src/**/*.ts"]
 }
+
