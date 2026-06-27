@@ -1,0 +1,26 @@
+import type DockerStreamOutput from "../types/dockerStreamOutput.js";
+import { DOCKER_STREAM_HEADER_SIZE } from "../utils/constants.js";
+
+export default function decodeDockerStream(buffer: Buffer): DockerStreamOutput{
+ let offset = 0;  
+ 
+ const output: DockerStreamOutput = { stdout: '', stderr: ''};
+
+ while(offset < buffer.length){
+
+    const typeOfStream = buffer[offset];  //kind of red header 
+
+    const length = buffer.readUInt32BE(offset + 4); 
+    offset+= DOCKER_STREAM_HEADER_SIZE; //moving the value
+
+    if(typeOfStream === 1){
+        output.stdout += buffer.toString('utf-8', offset, offset+length);
+        
+    } else if(typeOfStream === 2){
+        output.stderr += buffer.toString('utf-8', offset, offset+length);
+        
+    }
+    offset+=length;
+ }
+ return output;
+}

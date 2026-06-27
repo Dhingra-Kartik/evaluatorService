@@ -26,10 +26,12 @@
     "typescript-eslint": "^8.61.1"
   },
   "dependencies": {
+    "@types/dockerode": "^4.0.1",
     "@types/ioredis": "^4.28.10",
     "body-parser": "^2.3.0",
     "bullmq": "^5.78.1",
     "concurrently": "^10.0.3",
+    "dockerode": "^5.0.1",
     "express": "^5.2.1",
     "ioredis": "^5.11.1",
     "zod": "^4.4.3"
