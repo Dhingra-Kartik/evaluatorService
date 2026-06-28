@@ -4,7 +4,9 @@ import APIRouter from "./routes/index.js";
 // import sampleQueueProducer from "./producers/sampleQueueProducer.js";
 import SampleWorker from "./workers/sampleQueueWorker.js";
 import bodyParser from "body-parser";
-import runPython from "./containers/runPythonDocker.js";
+//import runPython from "./containers/runPythonDocker.js";
+//import runJava from "./containers/runJavaDocker.js";
+import runCpp from "./containers/runCppDocker.js";
 
 const app = express();
 
@@ -20,10 +22,39 @@ app.listen(serverConfig.PORT, () => {
 
   SampleWorker('SampleQueue');
 
-  const code = `print("hello")
-y = input()
-print("value of y is:", y)`;
-runPython(code, "100");
+const code = `#include<iostream>
+using namespace std;
+
+int main(){
+int x;
+cin>>x;
+cout<<"The value of x is: "<<x;
+
+cout<<endl;
+return 0;
+}`;
+
+runCpp(code, "1019");
+
+  //JAVA CODE RUNNING
+//   const code = `import java.util.Scanner;
+// public class Main {
+//     public static void main(String[] args) {
+//         Scanner sc = new Scanner(System.in);
+//         String x = sc.nextLine();
+//         System.out.println("You entered: " + x);
+//         sc.close();
+//     }
+// }
+// `;
+// runJava(code, "1000");
+
+
+//PYTHON CODE RUNNING
+//   const code = `print("hello")
+// y = input()
+// print("value of y is:", y)`;
+// runPython(code, "100");
 
   // sampleQueueProducer('SampleJob', {
   //   name: "Sankiii",
