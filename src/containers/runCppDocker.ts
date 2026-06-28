@@ -1,10 +1,12 @@
 import createContainer from './containerFactory.js';
 import { CPP_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
+import pullimage from './pullImage.js';
 
 
 async function runCpp(code: string, inputTestCase: string){
     const rawbuffer: Buffer[] = [];
+    await pullimage(CPP_IMAGE);
     //const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
     const runCommand = `echo '${code.replace(/'/g,`'\\"`)}' > main.cpp && g++ main.cpp -o main && echo ${inputTestCase.replace(/'/g,`'\\"`)} | ./main`;
 

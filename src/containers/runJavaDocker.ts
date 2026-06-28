@@ -2,10 +2,12 @@
 import createContainer from './containerFactory.js';
 import { JAVA_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
+import pullimage from './pullImage.js';
 
 
 async function runJava(code: string, inputTestCase: string){
     const rawbuffer: Buffer[] = [];
+    await pullimage(JAVA_IMAGE);
     //const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
     const runCommand = `echo '${code.replace(/'/g,`'\\"`)}' > Main.java && javac Main.java && echo ${inputTestCase.replace(/'/g,`'\\"`)} | java Main`;
 
