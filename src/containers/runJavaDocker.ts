@@ -1,26 +1,26 @@
 
 import createContainer from './containerFactory.js';
-import { PYTHON_IMAGE } from '../utils/constants.js';
+import { JAVA_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
 import pullimage from './pullImage.js';
 
 
-async function runPython(code: string, inputTestCase: string){
+async function runJava(code: string, inputTestCase: string){
     const rawbuffer: Buffer[] = [];
-    await pullimage(PYTHON_IMAGE);
+    await pullimage(JAVA_IMAGE);
     //const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
-    const runCommand = `echo '${code.replace(/'/g,`'\\"`)}' > test.py && echo ${inputTestCase.replace(/'/g,`'\\"`)} | python3 test.py`;
+    const runCommand = `echo '${code.replace(/'/g,`'\\"`)}' > Main.java && javac Main.java && echo ${inputTestCase.replace(/'/g,`'\\"`)} | java Main`;
 
-    const pythonDockerContainer = await createContainer(PYTHON_IMAGE, [
+    const javaDockerContainer = await createContainer(JAVA_IMAGE, [
         '/bin/sh',
         '-c',
         runCommand
     ]);
 
-    await pythonDockerContainer.start();
+    await javaDockerContainer.start();
     console.log("STARTED DOCKER CONTAINER");
 
-    const loggerStream = await pythonDockerContainer.logs({
+    const loggerStream = await javaDockerContainer.logs({
         stdout: true,
         stderr: true,
         timestamps: true,
@@ -42,7 +42,7 @@ async function runPython(code: string, inputTestCase: string){
         });
     })
 
-    await pythonDockerContainer.remove();
+    await javaDockerContainer.remove();
 }
 
-export default runPython;
+export default runJava;
