@@ -19,18 +19,19 @@ export default class SubmissionJob implements IJob {
         const codeLanguage: any = this.payload[key]?.language;
         const code: any = this.payload[key]?.code;
         const inputTestCase: any = this.payload[key]?.inputCase;
+        const outputTestCase: any = this.payload[key]?.outputCase;
+
         const strategy = createExecutor(codeLanguage);
         if(strategy!== null){
-            const response: ExecutionResponse = await strategy.execute(code, inputTestCase);
+            const response: ExecutionResponse = await strategy.execute(code, inputTestCase, outputTestCase);
             if(response.status === "COMPLETED"){
-                console.log("Code executed successfully");
-                console.log(response);
+                console.log("Code executed successfully, job status COMPLETED");
+                console.log({Output: response.output, Status: response.status});
             } else {
                 console.log("Job Error: Something went wrong with execution of code");
                 console.log(response);
             }
         }
-        
         
         console.log("BullMQ job data:", job?.data);
         }

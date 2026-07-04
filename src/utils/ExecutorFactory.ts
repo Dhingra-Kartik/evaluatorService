@@ -3,12 +3,12 @@ import PythonExecutor from "../containers/PythonExecutor.js";
 import CppExecutor from "../containers/CppExevutor.js";
 import JavaExecutor from "../containers/JavaExecutor.js";
 
-export default function createExecutor(codeLanguage: string): CodeExecutorStrategy | null {
-    if(codeLanguage === "PYTHON"){
+export default function createExecutor(codeLanguage: string) : CodeExecutorStrategy | null {
+    if(codeLanguage.toLowerCase() === "python"){
         return new PythonExecutor();
-    } else if (codeLanguage === "JAVA"){
+    } else if (codeLanguage.toLowerCase() === "java"){
         return new JavaExecutor();
-    } else if (codeLanguage === "CPP"){
+    } else if (codeLanguage.toLowerCase() === "cpp"){
         return new CppExecutor();
     } else {return null; }
     

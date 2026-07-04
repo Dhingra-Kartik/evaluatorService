@@ -7,7 +7,9 @@ import type CodeExecutorStrategy from './codeExecutorStrategy.js';
 import type { ExecutionResponse } from './codeExecutorStrategy.js';
 
 class PythonExecutor implements CodeExecutorStrategy {
-    async execute(code: string, inputTestCase: string): Promise<ExecutionResponse> {
+    async execute(code: string, inputTestCase: string, outputTestCase :string): Promise<ExecutionResponse> {
+        console.log(code, inputTestCase, outputTestCase);
+         console.log("Python executor called");
         const rawbuffer: Buffer[] = [];
         await pullimage(PYTHON_IMAGE);
         const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > test.py && echo ${inputTestCase.replace(/'/g, `'\\"`)} | python3 test.py`;
