@@ -36,13 +36,23 @@ class JavaExecutor implements CodeExecutorStrategy {
         });
 
         try {
-            const codeResponse: string = await this.fetchDecodedStream(loggerStream, rawbuffer);
-            return { output: codeResponse, status: "COMPLETED" };
+            const rawResponse: string = await this.fetchDecodedStream(loggerStream, rawbuffer);
+            const codeResponse = rawResponse.replace(/^\d{4}-\d{2}-\d{2}T[^\s]+\s/, "").trim();
+
+            if(codeResponse.trim() === outputTestCase.trim()){
+                return { output: codeResponse, status: "COMPLETED" };
+            } else {
+                return { output: codeResponse, status: "WRONG ANSWER" };
+            }
         } catch (err) {
+            console.log("Error Occured", err);
+            if(err === "TLE") {
+                await javaDockerContainer.kill();  //we will first stop it 
+            }
             return { output: err as string, status: "ERROR" }
 
         } finally {
-            await javaDockerContainer.remove();
+            await javaDockerContainer.remove(); //then remove it 
 
         }
 
@@ -50,7 +60,12 @@ class JavaExecutor implements CodeExecutorStrategy {
 
     fetchDecodedStream(loggerStream: NodeJS.ReadableStream, rawbuffer: Buffer[]): Promise<string> {
         return new Promise((res, rej) => {
+            const timeout = setTimeout(() => {
+                console.log("Timeout called");
+                rej("TLE"); //you rejected it but execution is still going on
+            }, 40000);
             loggerStream.on('end', () => {
+                clearTimeout(timeout);
                 console.log(rawbuffer);
                 const completedBuffer = Buffer.concat(rawbuffer);
                 const decodedStream = decodeDockerStream(completedBuffer);
