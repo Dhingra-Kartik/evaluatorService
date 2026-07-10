@@ -39,7 +39,7 @@ class CppExecutor implements CodeExecutorStrategy {
             const codeResponse = rawResponse.replace(/^\d{4}-\d{2}-\d{2}T[^\s]+\s/, "").trim();
 
             if(codeResponse.trim() === outputTestCase.trim()){
-                return { output: codeResponse, status: "COMPLETED" };
+                return { output: codeResponse, status: "SUCCESS" };
             } else {
                 return { output: codeResponse, status: "WRONG ANSWER" };
             }

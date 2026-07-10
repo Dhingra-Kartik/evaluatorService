@@ -28,8 +28,8 @@ export default class SubmissionJob implements IJob {
         if(strategy!== null){
             const response: ExecutionResponse = await strategy.execute(code, inputTestCase, outputTestCase);
             evalutionQueueProducer({response, userId, submissionId});
-            if(response.status === "COMPLETED"){
-                console.log("Code executed successfully, job status COMPLETED");
+            if(response.status === "SUCCESS"){
+                console.log("Code executed successfully, job status SUCCESS");
                 console.log({Output: response.output, Status: response.status});
             } else {
                 console.log("Job Error: Something went wrong with execution of code");
