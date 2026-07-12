@@ -6,12 +6,19 @@ import type CodeExecutorStrategy from './codeExecutorStrategy.js';
 import type { ExecutionResponse } from './codeExecutorStrategy.js';
 
 class CppExecutor implements CodeExecutorStrategy {
+    private ready: Promise<any>;
+
+    constructor(){
+        this.ready = pullimage(CPP_IMAGE);
+    }
+
     async execute(code: string, inputTestCase: string, outputTestCase :string): Promise<ExecutionResponse> {
+
         console.log(code, inputTestCase, outputTestCase);
         console.log("CPP executor called");
         const rawbuffer: Buffer[] = [];
-        await pullimage(CPP_IMAGE);
-        //const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
+        await this.ready;
+        
         const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > main.cpp && g++ main.cpp -o main && echo ${inputTestCase.replace(/'/g, `'\\"`)} | ./main`;
 
         const cppDockerContainer = await createContainer(CPP_IMAGE, [
