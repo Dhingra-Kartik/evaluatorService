@@ -1,9 +1,12 @@
-export type submissionPayload= {
-    code: string,
-    language: string,
-    inputCase: string,
-    outputCase: string,
-    userId: string,
-    submissionId: string
+export type TestCase = {
+      input: string;
+    output: string;
+}
 
+export type submissionPayload= {
+    code: string;
+    language: string;
+    userId: string;
+    testCases: TestCase[];
+    submissionId: string;
 }

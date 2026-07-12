@@ -12,34 +12,50 @@ export default class SubmissionJob implements IJob {
         this.payload = payload;
         this.name = this.constructor.name;
     }
-    async handle(job?: Job): Promise<void> {
-        console.log("This is our payload we sent", this.payload);
-        if(job){
-        console.log(`✅ Handling job: ${this.name}`);
-        const key= Object.keys(this.payload)[0] as keyof typeof this.payload;
-        const codeLanguage: any = this.payload[key]?.language;
-        const code: any = this.payload[key]?.code;
-        const inputTestCase: any = this.payload[key]?.inputCase;
-        const outputTestCase: any = this.payload[key]?.outputCase;
-        const userId: any = this.payload[key]?.userId
-        const submissionId: any = this.payload[key]?.submissionId
 
-        const strategy = createExecutor(codeLanguage);
-        if(strategy!== null){
-            const response: ExecutionResponse = await strategy.execute(code, inputTestCase, outputTestCase);
-            evalutionQueueProducer({response, userId, submissionId});
-            if(response.status === "COMPLETED"){
-                console.log("Code executed successfully, job status COMPLETED");
-                console.log({Output: response.output, Status: response.status});
-            } else {
-                console.log("Job Error: Something went wrong with execution of code");
-                console.log(response);
-            }
+    async handle(job?: Job): Promise<void> {
+  console.log("This is our payload we sent", this.payload);
+
+  if (job) {
+    console.log(`✅ Handling job: ${this.name}`);
+
+    const [key, submission] = Object.entries(this.payload)[0] as [string, submissionPayload];
+    const { code, language, testCases, userId, submissionId } = submission;
+    console.log(key.toString());
+
+    const strategy = createExecutor(language);
+    if (strategy !== null) {
+      const tasks = testCases.map(tc =>
+        strategy.execute(code, tc.input, tc.output)
+      );
+
+const results: ExecutionResponse[] = await Promise.all(tasks);
+
+results.forEach((response, idx) => {
+        const tc = testCases[idx];
+        if(!tc) return;
+        if (response.status === "SUCCESS") {
+          console.log("✅ Test case passed", {
+            Input: tc.input,
+            Expected: tc.output,
+            Output: response.output,
+          });
+        } else {
+          console.log("❌ Test case failed", {
+            Input: tc.input,
+            Expected: tc.output,
+            Output: response.output,
+          });
         }
-        
-        console.log("BullMQ job data:", job?.data);
-        }
+      });
+
+      // Send aggregated results back
+      evalutionQueueProducer({ response: results, userId, submissionId });
+    } else {
+      console.log("Job Error: No executor strategy found");
     }
+  }
+}
 
     async failed(job?: Job): Promise<void> {
         if(job){
