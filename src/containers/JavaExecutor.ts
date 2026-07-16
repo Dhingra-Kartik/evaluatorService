@@ -2,16 +2,23 @@
 import createContainer from './containerFactory.js';
 import { JAVA_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
-import pullimage from './pullImage.js';
+// import pullimage from './pullImage.js';
 import type CodeExecutorStrategy from './codeExecutorStrategy.js';
 import type { ExecutionResponse } from './codeExecutorStrategy.js';
 
 class JavaExecutor implements CodeExecutorStrategy {
+    // private ready: Promise<any>;
+    
+        constructor(){
+            // this.ready = pullimage(CPP_IMAGE);
+        }
+
     async execute(code: string, inputTestCase: string, outputTestCase :string): Promise<ExecutionResponse> {
         console.log(code, inputTestCase, outputTestCase);
         console.log("Java executor called");
         const rawbuffer: Buffer[] = [];
-        await pullimage(JAVA_IMAGE);
+        // await this.ready;
+
         //const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
         const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > Main.java && javac Main.java && echo ${inputTestCase.replace(/'/g, `'\\"`)} | java Main`;
 
@@ -27,7 +34,7 @@ class JavaExecutor implements CodeExecutorStrategy {
         const loggerStream = await javaDockerContainer.logs({
             stdout: true,
             stderr: true,
-            timestamps: true,
+            timestamps: false,
             follow: true
         });
 

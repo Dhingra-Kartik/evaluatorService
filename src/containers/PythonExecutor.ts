@@ -2,16 +2,23 @@
 import createContainer from './containerFactory.js';
 import { PYTHON_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
-import pullimage from './pullImage.js';
+// import pullimage from './pullImage.js';
 import type CodeExecutorStrategy from './codeExecutorStrategy.js';
 import type { ExecutionResponse } from './codeExecutorStrategy.js';
 
 class PythonExecutor implements CodeExecutorStrategy {
+    // private ready: Promise<any>;
+    
+        constructor(){
+            // this.ready = pullimage(CPP_IMAGE);
+        }
+        
     async execute(code: string, inputTestCase: string, outputTestCase :string): Promise<ExecutionResponse> {
         console.log(code, inputTestCase, outputTestCase);
          console.log("Python executor called");
         const rawbuffer: Buffer[] = [];
-        await pullimage(PYTHON_IMAGE);
+        // await this.ready;
+
         const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > test.py && echo ${inputTestCase.replace(/'/g, `'\\"`)} | python3 test.py`;
 
         const pythonDockerContainer = await createContainer(PYTHON_IMAGE, [
@@ -26,7 +33,7 @@ class PythonExecutor implements CodeExecutorStrategy {
         const loggerStream = await pythonDockerContainer.logs({
             stdout: true,
             stderr: true,
-            timestamps: true,
+            timestamps: false,
             follow: true
         });
 
