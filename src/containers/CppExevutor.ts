@@ -1,15 +1,15 @@
 import createContainer from './containerFactory.js';
 import { CPP_IMAGE } from '../utils/constants.js';
 import decodeDockerStream from './dockerHelper.js';
-import pullimage from './pullImage.js';
+// import pullimage from './pullImage.js';
 import type CodeExecutorStrategy from './codeExecutorStrategy.js';
 import type { ExecutionResponse } from './codeExecutorStrategy.js';
 
 class CppExecutor implements CodeExecutorStrategy {
-    private ready: Promise<any>;
+    // private ready: Promise<any>;
 
     constructor(){
-        this.ready = pullimage(CPP_IMAGE);
+        // this.ready = pullimage(CPP_IMAGE);
     }
 
     async execute(code: string, inputTestCase: string, outputTestCase :string): Promise<ExecutionResponse> {
@@ -17,7 +17,8 @@ class CppExecutor implements CodeExecutorStrategy {
         console.log(code, inputTestCase, outputTestCase);
         console.log("CPP executor called");
         const rawbuffer: Buffer[] = [];
-        await this.ready;
+        // await this.ready;
+        
         
         const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > main.cpp && g++ main.cpp -o main && echo ${inputTestCase.replace(/'/g, `'\\"`)} | ./main`;
 
@@ -33,7 +34,7 @@ class CppExecutor implements CodeExecutorStrategy {
         const loggerStream = await cppDockerContainer.logs({
             stdout: true,
             stderr: true,
-            timestamps: true,
+            timestamps: false,
             follow: true
         });
 
